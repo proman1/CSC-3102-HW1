@@ -1,35 +1,65 @@
-import java.util.*;
-
 /**
  * @author Patrick Roman
  * @author Trey Thibodeaux
  */
-public class SortingComparer 
-{
-    static int[] array1 = new int[1000];
-    static int[] array2 = new int[10000];
-    static int[] array3 = new int[100000];
-    static int[] array4 = new int[100000];
-    static Random r = new Random();
-    static final int MAX  = 65535;
+
+import java.util.*;
+
+public class SortingComparer {
+    static final int MAX = 65535;   
+    static final int BASE = 256;
+    static LinkedList<Integer>[] queues;
+    static int[][] testArrays;
     
-    static void fillArrays()
-    {
-        int n1 = array1.length;
-        for(int i=0; i < n1; i++)
-           array1[i] = r.nextInt(MAX) + 1;
-    } 
+    static void fillTestArrays() {       
+       testArrays = new int[4][];
+       testArrays[0] = new int[1000];
+       testArrays[1] = new int[10000];
+       testArrays[2] = new int[100000];
+       testArrays[3] = new int[1000000];
+       Random r = new Random();
+       int n = testArrays.length;
+       for(int i = 0; i < n; i++) {
+          int p = testArrays[i].length;
+          for(int j = 0; j < p; j++)
+             testArrays[i][j] = r.nextInt(MAX) + 1;          
+       }       
+    }
     
-    static String printArrays()
-    {
-        return Arrays.toString(array1);
+    static void fillQueues() {
+       queues = new LinkedList[BASE];
+       for(int i = 0; i < BASE; i++)
+          queues[i] = new LinkedList();       
+    }
+    
+    /*
+     * METHOD NOT FINISHED YET
+     */
+    static int[] radixSort(int[] array) {       
+       
+       int n = array.length;
+       
+       int[] duplicateArray = new int[n];
+       
+       for(int i = 0; i < n; i++) {
+          int LCD = array[i] % BASE;
+          queues[LCD].add(array[i]);
+       }
+       
+       int k = 0;
+       for(int i = 0; i < BASE; i++){
+          int size = queues[i].size();
+          for(int j = 0; j < size; j++) {
+             duplicateArray[k] = queues[i].get(j).intValue();          
+             k++;
+          }
+       }
+       
     }
     
     
-    
-    public static void main(String[] args) 
-    {
-        fillArrays();
-        System.out.println(printArrays());
+    public static void main(String[] args) {
+        fillTestArrays();
+        fillQueues();
     }
 }
