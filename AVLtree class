@@ -1,0 +1,99 @@
+public class AVLTree 
+{
+    Node root;
+    int height;
+    int balanceFactor;
+    AVLTree left;
+    AVLTree right;
+    
+    
+    // Constructor
+    AVLTree()
+    {
+       root = null;
+       left = null;
+       right = null;
+       height = 0;
+       balanceFactor = 0;
+    }
+    
+    
+    
+    public void insert(Node base, Node newNode)
+    {
+        if(root == null)
+        {
+           root = newNode;
+           height = 1;
+        }
+        else if(base.key < newNode.key)
+           if(base.right != null)
+              insert(base.right, newNode);
+           else{
+             base.right = newNode;
+              if(base.balanceFactor == 0){
+                balanceFactor = -1;
+                height++;
+              }
+              else
+                  balanceFactor = 0;
+           }
+        else if(base.key > newNode.key)
+            if(base.left != null)
+                insert(base.left , newNode);
+             else{
+             base.left = newNode;
+              if(base.balanceFactor == 0){
+                balanceFactor = 1;
+                height++;
+              }
+              else
+                  balanceFactor = 0;
+              
+    }
+}
+    
+    // METHODS FOR AVL TREE
+    /*
+     * Insert
+     * Min
+     * Max
+     * In-Order Traversal
+     * Search
+     * Successor
+     * Predecessor
+     * Select
+     * Rank 
+     */
+    
+   public class Node
+   {
+     int key;
+     Node left;
+     Node right;
+     Node parent;
+     int balanceFactor;
+
+     Node()
+     {
+         key = -1;
+         left = null;
+         right = null;
+         parent = null;
+     }
+
+     Node(int num, Node leftChild, Node rightChild, Node father)
+     {
+         key = num;
+         left = leftChild;
+         right = rightChild;
+         parent = father;
+     }
+  }
+    public static void main(String[] args) 
+    {
+    
+        
+        
+    }
+}
