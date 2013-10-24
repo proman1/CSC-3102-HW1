@@ -1,0 +1,159 @@
+public class AVLTree 
+{
+    Node root;
+    Node parent;
+    int height;
+    int balanceFactor;
+    AVLTree left;
+    AVLTree right;
+    
+    
+    // Constructor
+    AVLTree()
+    {
+       root = null;
+       left = null;
+       right = null;
+       height = 0;
+       balanceFactor = 0;
+    }
+    
+    
+    
+    public void insert(Node base, Node newNode)
+    {
+        if(root == null)
+        {
+           root = newNode;
+           height = 1;
+        }
+        else if(base.key < newNode.key)
+           if(base.right != null)
+              insert(base.right, newNode);
+           else{
+             base.right = newNode;
+              if(base.balanceFactor == 0){
+                balanceFactor = -1;
+                height++;
+              }
+              else
+                  balanceFactor = 0;
+           }
+        else if(base.key > newNode.key)
+            if(base.left != null)
+                insert(base.left , newNode);
+             else{
+             base.left = newNode;
+              if(base.balanceFactor == 0){
+                balanceFactor = 1;
+                height++;
+              }
+              else
+                  balanceFactor = 0;
+              
+    }
+}
+    public void max(Node base){
+        if(base.right != null){
+            max(base.right);
+        }
+        else 
+            System.out.println(base);
+    }
+    
+    public void min(Node base)
+    {
+        if(base.left != null){
+            min(base.left);
+        }
+        else
+            System.out.println(base);
+    }
+    
+    public void inOrderTransversal(Node base){
+        if(base.left != null)
+            inOrderTransversal(base.left);
+        System.out.println(base);
+        if(base.right != null) 
+            inOrderTransversal(base.right);
+    }
+    
+    public void search(Node base, Node searchNode){
+        
+        if(base== null || base.key == searchNode.key){
+            System.out.println("Found" + searchNode.key);
+        }
+        else{
+            if(searchNode.key < base.key){
+                search(base.left, searchNode);
+            }
+            else
+                search(base.right, searchNode);
+        }
+    }
+    
+    public void successor()
+    {
+        if(root.right != null){
+            min(root.right);
+        }
+        else
+        {
+            max(root.left);
+        }
+    }
+    //not finished
+    public void predecessor(){
+
+        if(parent.right == root){
+            System.out.println("Predcessor of " + root.key + "is " + root.parent);
+        } else {
+            
+        }
+
+}
+    
+    // METHODS FOR AVL TREE
+    /*
+     * Insert
+     * Min
+     * Max
+     * In-Order Traversal
+     * Search
+     * Successor
+     * Predecessor
+     * Select
+     * Rank 
+     */
+    
+   public class Node
+   {
+     int key;
+     Node left;
+     Node right;
+     Node parent;
+     int balanceFactor;
+
+     Node()
+     {
+         key = -1;
+         left = null;
+         right = null;
+         parent = null;
+     }
+
+     Node(int num, Node leftChild, Node rightChild, Node father)
+     {
+         key = num;
+         left = leftChild;
+         right = rightChild;
+         parent = father;
+     }
+  }
+    public static void main(String[] args) 
+    {
+    
+        
+        
+    }
+}
