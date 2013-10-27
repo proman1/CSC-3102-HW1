@@ -5,21 +5,20 @@
 
 import java.util.*;
 
-public class SortingComparer 
+public class SortingComparer
 {
-   public static void main(String[] args) 
+   public static void main(String[] args)
    {
       fillTestArrays();
       setBuckets();
-      String result = displayResults();
-      System.out.println(result);
+      System.out.println(displayResults());
    }
    
-   static int[][] testArrays;   
+   static int[][] testArrays;
    static LinkedList<Integer>[] buckets;
-   static final int MAX = 65535, BASE = 256;  
+   static final int MAX = 65535, BASE = 256;
    
-   static void fillTestArrays() 
+   static void fillTestArrays()
    {
       testArrays = new int[4][];
       testArrays[0] = new int[1000];
@@ -28,7 +27,7 @@ public class SortingComparer
       testArrays[3] = new int[1000000];
       Random r = new Random();
       int n = testArrays.length;
-      for(int i = 0; i < n; i++) 
+      for(int i = 0; i < n; i++)
       {
          int p = testArrays[i].length;
          for(int j = 0; j < p; j++)
@@ -36,8 +35,8 @@ public class SortingComparer
       }
     }
    
-    static void setBuckets() 
-    {       
+    static void setBuckets()
+    {
        buckets = new LinkedList[BASE];
        for(int i = 0; i < BASE; i++)
           buckets[i] = new LinkedList();
@@ -56,26 +55,26 @@ public class SortingComparer
     {
        int n = array.length;
        int unitDigit = -1;
-       for(int i = 0; i < n; i++) 
+       for(int i = 0; i < n; i++)
        {
           unitDigit = array[i] % BASE;
           buckets[unitDigit].add(array[i]);
-       }  
+       }
     }
     
     static void passAndDrop2(int[] array)
     {
        int n = array.length;
        int nextDigit = -1;
-       for(int i = 0; i < n; i++) 
+       for(int i = 0; i < n; i++)
        {
           nextDigit = array[i] / BASE;
           buckets[nextDigit].add(array[i]);
-       }  
-    }  
+       }
+    }
     
     static void reorderArray(int[] array)
-    {       
+    {
        int arrayLength = array.length;
        int r = 0;
        while(r < arrayLength)
@@ -87,9 +86,9 @@ public class SortingComparer
                 {
                    int k = buckets[i].removeFirst();
                    array[r] = k;
-                   r++;                
+                   r++;
                 }
-             }    
+             }
     }
     
     static int[] radixSort(int[] testArray)
@@ -115,12 +114,12 @@ public class SortingComparer
        long[] times = new long[n];
        for(int i = 0; i < n; i++)
        {
-          long startTime = System.currentTimeMillis();
+          long startTime = System.nanoTime();
           radixSort(testArrays[i]);
-          long endTime = System.currentTimeMillis();
+          long endTime = System.nanoTime();
           times[i] = endTime - startTime;
        }
-       return times;       
+       return times;
     }
     
     static long[] getJavaSortTimes()
@@ -129,20 +128,30 @@ public class SortingComparer
        long[] times = new long[n];
        for(int i = 0; i < n; i++)
        {
-          long startTime = System.currentTimeMillis();
+          long startTime = System.nanoTime();
           javaSort(testArrays[i]);
-          long endTime = System.currentTimeMillis();
+          long endTime = System.nanoTime();
           times[i] = endTime - startTime;
        }
-       return times;       
+       return times;
     }
     
     static String displayResults()
     {
-       String result = String.format("===========================================================%n"
-                                   + "==  Input Size  ||  RadixSort times  ||  JavaSort times  ==%n"
-                                   + "===========================================================%n"
-                                   + "== ");
-       return result;
+       long[] radixTimes = getRadixSortTimes();
+       long[] javaTimes = getJavaSortTimes();
+       String answer = String.format("Input = 1000%n" + 
+                                      String.format("%11d", radixTimes[0]) + " microseconds, RadixSort%n" +
+                                      String.format("%11d", javaTimes[0]) + " microseconds, JavaSort%n" +
+                                     "Input = 10000%n" + 
+                                      String.format("%11d", radixTimes[1]) + " microseconds, RadixSort%n" +
+                                      String.format("%11d", javaTimes[1]) + " microseconds, JavaSort%n" +
+                                     "Input = 100000%n" + 
+                                      String.format("%11d", radixTimes[2]) + " microseconds, RadixSort%n" +
+                                      String.format("%11d", javaTimes[2]) + " microseconds, JavaSort%n" + 
+                                     "Input = 1000000%n" + 
+                                      String.format("%11d", radixTimes[3]) + " microseconds, RadixSort%n" +
+                                      String.format("%11d", javaTimes[3]) + " microseconds, JavaSort");
+       return answer;
     }
 }
