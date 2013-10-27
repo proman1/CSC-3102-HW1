@@ -1,0 +1,180 @@
+/**
+ * @author Patrick Roman
+ * @author Trey Thibodeaux
+ */
+
+import java.io.*;
+import java.util.*;
+
+public class KAryHeapAnalyzer 
+{
+   public static void main(String[] args) 
+   {
+      setKValues();
+      scanInput();
+      long[] runTimes = getTimes();
+      System.out.println(displayResults(runTimes));
+   }
+   
+   static int[] extracts;
+   static int[] heap;
+   static int[] kValues;
+   static LinkedList<Integer> actionList;
+   
+   static void scanInput()
+   {
+      actionList = new LinkedList();
+      int inserts = 0;
+      try
+      {
+         Scanner sc = new Scanner(new File("heapinput2.txt"));         
+         String line = "";
+         while(sc.hasNextLine())
+         {            
+            line = sc.nextLine();
+            if(line.startsWith("IN"))
+            {
+               inserts++;
+               String stringNum = line.substring(2).trim();
+               int num = Integer.parseInt(stringNum);
+               actionList.add(num);
+            }
+            else
+               actionList.add(-1);
+         }
+         heap = new int[inserts];
+         for(int i = 0; i < inserts; i++)
+            heap[i] = -1;
+         extracts = new int[actionList.size() - inserts];
+      }
+      catch(FileNotFoundException fnf1)
+      {
+         System.out.println("Could not locate heapinput2.txt");
+         System.exit(1);         
+      }      
+   }
+   
+   static void setKValues()
+   {
+      kValues = new int[]{2, 4, 6, 8, 10};
+   }
+   
+   static long scrollActions(int k)
+   {
+      int n = actionList.size();
+      int heapSize = 0, pullNum = 0;
+      long startTime = System.nanoTime();
+      for(int i = 0; i < n; i++)
+         if(-1 < actionList.get(i))
+         {
+            heap[heapSize] = actionList.get(i);
+            heapify(heapSize++, k);
+         }
+         else
+         {
+            if(0 == heapSize)
+            {
+               System.out.println("Error: No value to extract.");
+               System.exit(2);
+            }
+            else
+            {
+               extracts[pullNum++] = heap[0];               
+               heap[0] = heap[heapSize - 1];
+               heap[heapSize - 1] = -1;
+               heapify(--heapSize, k);
+            }            
+         }      
+      return System.nanoTime() - startTime;
+   }
+   
+   static void heapify(int size, int k)
+   {
+      if(size < 2)
+         return;
+      else
+      {
+         for(int i = ((size - 1) - 1)/k; i >= 0; i--)
+            while(i * k + 1 <= size - 1)
+            {               
+               int minChildPos;
+               if(i == ((size - 1) - 1)/k)
+                  minChildPos = getMinPos(i * k + 1, size - 1);      
+               else      
+                  minChildPos = getMinPos(i * k + 1, i * k + k);
+               if(heap[minChildPos] < heap[i])
+               {
+                  swap(minChildPos, i);
+                  i = minChildPos;                  
+               }
+               else
+                  break;
+            }
+      }
+   }
+         
+   static int getMinPos(int a, int b)
+   {
+      int minPos;
+      if(a == b)
+         return a;
+      else
+      {
+         minPos = a;
+         for(int i = a + 1; i <= b; i++)
+            if(heap[i] < heap[minPos]) 
+               minPos = i;
+      }
+      return minPos;
+   }
+   
+   static void swap(int a, int b)
+   {
+      int temp = heap[a];
+      heap[a] = heap[b];
+      heap[b] = temp;
+   }
+   
+   static void clearHeap()
+   {
+      int n = heap.length;
+      for(int i = 0; i < n; i++)
+         heap[i] = -1;
+   }
+   
+   static void clearExtracts()
+   {
+      int n = extracts.length;
+      for(int i = 0; i < n; i++)
+         extracts[i] = 0;
+   }
+   
+   static long[] getTimes()
+   {      
+      int n = kValues.length;
+      long[] times = new long[n];
+      times[0] = scrollActions(kValues[0]);
+      for(int i = 1; i < n; i++)
+      {
+         clearHeap();
+         clearExtracts();
+         times[i] = scrollActions(kValues[i]);
+      }
+      return times;
+   }
+   
+   static String displayResults(long[] times)
+   {      
+      String results = String.format("K-Ary = 2%n"
+                                   + String.format("%10d microseconds%n", times[0])
+                                   + "K-Ary = 4%n"
+                                   + String.format("%10d microseconds%n", times[1])
+                                   + "K-Ary = 6%n"
+                                   + String.format("%10d microseconds%n", times[2])
+                                   + "K-Ary = 8%n"
+                                   + String.format("%10d microseconds%n", times[3])
+                                   + "K-Ary = 10%n"
+                                   + String.format("%10d microseconds", times[4]));
+      return results;
+   }
+}
