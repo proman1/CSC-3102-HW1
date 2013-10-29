@@ -7,7 +7,17 @@ public class AVLTree
     AVLTree left;
     AVLTree right;
     
-    
+public void rotateRight()
+{
+   Node rightChild = root.right;
+    root.right = rightChild.left;
+    rightChild.left = root;
+}
+public void rotateLeft(){
+    Node leftChild = root.left;
+    root.left = leftChild.right;
+    leftChild.right = root;
+}
     // Constructor
     AVLTree()
     {
@@ -53,21 +63,22 @@ public class AVLTree
               
     }
 }
-    public void max(Node base){
+    public Node max(Node base){
         if(base.right != null){
-            max(base.right);
+            return max(base.right);
         }
         else 
-            System.out.println(base);
+            return base;
     }
     
-    public void min(Node base)
+    public Node min(Node base)
     {
+        
         if(base.left != null){
-            min(base.left);
+            return min(base.left);
         }
         else
-            System.out.println(base);
+            return base;
     }
     
     public void inOrderTransversal(Node base){
@@ -92,26 +103,37 @@ public class AVLTree
         }
     }
     
-    public void successor()
+    public Node successor(Node n)
     {
+        Node y;
+        
         if(root.right != null){
-            min(root.right);
+           return min(root.right);
         }
-        else
+        y = n.parent;
+        while(y != null && n == y.right)
         {
-            max(root.left);
+            n = y;
+            y = y.parent;
         }
+        return y;
     }
-    //not finished
-    public void predecessor(){
-
-        if(parent.right == root){
-            System.out.println("Predcessor of " + root.key + "is " + root.parent);
-        } else {
-            
+    public Node predecessor(Node n)
+    {
+        Node y;
+        
+        if(root.left != null){
+           return max(root.left);
         }
-
-}
+        y = n.parent;
+        while(y != null && n == y.left)
+        {
+            n = y;
+            y = y.parent;
+        }
+        return y;
+    }
+    
     
     // METHODS FOR AVL TREE
     /*
@@ -133,6 +155,8 @@ public class AVLTree
      Node right;
      Node parent;
      int balanceFactor;
+     int height;
+     int size;
 
      Node()
      {
@@ -140,19 +164,51 @@ public class AVLTree
          left = null;
          right = null;
          parent = null;
+         height = 1;
+         size = 1;
      }
-
-     Node(int num, Node leftChild, Node rightChild, Node father)
-     {
-         key = num;
-         left = leftChild;
-         right = rightChild;
-         parent = father;
+     
+     public int getHeight(){
+         int r;
+         int l;
+         
+         if(this.right == null){
+             r = 0;
+         }
+         else {
+             r = right.height;
+         }
+         if(this.left == null){
+             l = 0;
+         }
+         else{
+             l = left.height;
+         }
+             return l + r + 1;
+     }
+     
+     public int size(){
+         int rightSubTree;
+         int leftSubTree;
+        
+         if(right == null){
+             rightSubTree = 0;
+         }
+         else{
+             rightSubTree = right.size;
+         }
+         if(left == null){
+             leftSubTree = 0;
+         }
+         else{
+             leftSubTree = left.size;
+         }
+         return leftSubTree + rightSubTree + 1;
      }
   }
     public static void main(String[] args) 
     {
-    
+        
         
         
     }
