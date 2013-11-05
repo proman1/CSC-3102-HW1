@@ -165,25 +165,16 @@ public class KAryHeapAnalyzer
    
    static String displayResults(long[] times)
    {      
-      String results = String.format("__________________________________________%n"
-                                   + "           |                              %n"
-                                   + "   K-Ary   |   Run-Time in Microseconds   %n"                                   
-                                   + "___________|______________________________%n"
-                                   + "     2     |           " + times[0] + "%n"
-                                   + "     4     |           " + times[1] + "%n"
-                                   + "     6     |           " + times[2] + "%n"
-                                   + "     8     |           " + times[3] + "%n"
-                                   + "    10     |           " + times[4] + "%n"
-                                   + "___________|______________________________%n");
+      String results = String.format("K-Ary = 2%n"
+                                   + String.format("%10d microseconds%n", times[0])
+                                   + "K-Ary = 4%n"
+                                   + String.format("%10d microseconds%n", times[1])
+                                   + "K-Ary = 6%n"
+                                   + String.format("%10d microseconds%n", times[2])
+                                   + "K-Ary = 8%n"
+                                   + String.format("%10d microseconds%n", times[3])
+                                   + "K-Ary = 10%n"
+                                   + String.format("%10d microseconds", times[4]));
       return results;
-   }
-   
-   static String displayActions()
-   {
-      String actions = "";
-      int n = actionList.size();
-      for(int i = 0; i < n; i++)
-         actions = actions + actionList.get(i) + String.format("%n");
-      return actions;
    }
 }
