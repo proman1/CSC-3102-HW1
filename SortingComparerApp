@@ -3,178 +3,155 @@
  * @author Trey Thibodeaux
  */
 
-import java.io.*;
 import java.util.*;
 
-public class KAryHeapAnalyzer 
+public class SortingComparer
 {
-   public static void main(String[] args) 
+   public static void main(String[] args)
    {
-      setKValues();
-      scanInput();
-      long[] runTimes = getTimes();
-      System.out.println(displayResults(runTimes));
+      fillTestArrays();
+      setBuckets();
+      System.out.println(displayResults());
    }
    
-   static int[] extracts;
-   static int[] heap;
-   static int[] kValues;
-   static LinkedList<Integer> actionList;
+   static int[][] testArrays;
+   static LinkedList<Integer>[] buckets;
+   static final int MAX = 65535, BASE = 256;
    
-   static void scanInput()
+   static void fillTestArrays()
    {
-      actionList = new LinkedList();
-      int inserts = 0;
-      try
-      {
-         Scanner sc = new Scanner(new File("heapinput2.txt"));         
-         String line = "";
-         while(sc.hasNextLine())
-         {            
-            line = sc.nextLine();
-            if(line.startsWith("IN"))
-            {
-               inserts++;
-               String stringNum = line.substring(2).trim();
-               int num = Integer.parseInt(stringNum);
-               actionList.add(num);
-            }
-            else
-               actionList.add(-1);
-         }
-         heap = new int[inserts];
-         for(int i = 0; i < inserts; i++)
-            heap[i] = -1;
-         extracts = new int[actionList.size() - inserts];
-      }
-      catch(FileNotFoundException fnf1)
-      {
-         System.out.println("Could not locate heapinput2.txt");
-         System.exit(1);         
-      }      
-   }
-   
-   static void setKValues()
-   {
-      kValues = new int[]{2, 4, 6, 8, 10};
-   }
-   
-   static long scrollActions(int k)
-   {
-      int n = actionList.size();
-      int heapSize = 0, pullNum = 0;
-      long startTime = System.nanoTime();
+      testArrays = new int[4][];
+      testArrays[0] = new int[1000];
+      testArrays[1] = new int[10000];
+      testArrays[2] = new int[100000];
+      testArrays[3] = new int[1000000];
+      Random r = new Random();
+      int n = testArrays.length;
       for(int i = 0; i < n; i++)
-         if(-1 < actionList.get(i))
-         {
-            heap[heapSize] = actionList.get(i);
-            heapify(heapSize++, k);
-         }
-         else
-         {
-            if(0 == heapSize)
-            {
-               System.out.println("Error: No value to extract.");
-               System.exit(2);
-            }
-            else
-            {
-               extracts[pullNum++] = heap[0];               
-               heap[0] = heap[heapSize - 1];
-               heap[heapSize - 1] = -1;
-               heapify(--heapSize, k);
-            }            
-         }      
-      return System.nanoTime() - startTime;
-   }
-   
-   static void heapify(int size, int k)
-   {
-      if(size < 2)
-         return;
-      else
       {
-         for(int i = ((size - 1) - 1)/k; i >= 0; i--)
-            while(i * k + 1 <= size - 1)
-            {               
-               int minChildPos;
-               if(i == ((size - 1) - 1)/k)
-                  minChildPos = getMinPos(i * k + 1, size - 1);      
-               else      
-                  minChildPos = getMinPos(i * k + 1, i * k + k);
-               if(heap[minChildPos] < heap[i])
-               {
-                  swap(minChildPos, i);
-                  i = minChildPos;                  
-               }
-               else
-                  break;
-            }
+         int p = testArrays[i].length;
+         for(int j = 0; j < p; j++)
+            testArrays[i][j] = r.nextInt(MAX) + 1;
       }
-   }
-         
-   static int getMinPos(int a, int b)
-   {
-      int minPos;
-      if(a == b)
-         return a;
-      else
-      {
-         minPos = a;
-         for(int i = a + 1; i <= b; i++)
-            if(heap[i] < heap[minPos]) 
-               minPos = i;
-      }
-      return minPos;
-   }
+    }
    
-   static void swap(int a, int b)
-   {
-      int temp = heap[a];
-      heap[a] = heap[b];
-      heap[b] = temp;
-   }
-   
-   static void clearHeap()
-   {
-      int n = heap.length;
-      for(int i = 0; i < n; i++)
-         heap[i] = -1;
-   }
-   
-   static void clearExtracts()
-   {
-      int n = extracts.length;
-      for(int i = 0; i < n; i++)
-         extracts[i] = 0;
-   }
-   
-   static long[] getTimes()
-   {      
-      int n = kValues.length;
-      long[] times = new long[n];
-      times[0] = scrollActions(kValues[0]);
-      for(int i = 1; i < n; i++)
-      {
-         clearHeap();
-         clearExtracts();
-         times[i] = scrollActions(kValues[i]);
-      }
-      return times;
-   }
-   
-   static String displayResults(long[] times)
-   {      
-      String results = String.format("K-Ary = 2%n"
-                                   + String.format("%10d microseconds%n", times[0])
-                                   + "K-Ary = 4%n"
-                                   + String.format("%10d microseconds%n", times[1])
-                                   + "K-Ary = 6%n"
-                                   + String.format("%10d microseconds%n", times[2])
-                                   + "K-Ary = 8%n"
-                                   + String.format("%10d microseconds%n", times[3])
-                                   + "K-Ary = 10%n"
-                                   + String.format("%10d microseconds", times[4]));
-      return results;
-   }
+    static void setBuckets()
+    {
+       buckets = new LinkedList[BASE];
+       for(int i = 0; i < BASE; i++)
+          buckets[i] = new LinkedList();
+    }
+    
+    static int[] getDuplicateArray(int[] testArray)
+    {
+       int n = testArray.length;
+       int[] duplicateArray = new int[n];
+       for(int i = 0; i < n; i++)
+          duplicateArray[i] = testArray[i];
+       return duplicateArray;
+    }
+    
+    static void passAndDrop1(int[] array)
+    {
+       int n = array.length;
+       int unitDigit = -1;
+       for(int i = 0; i < n; i++)
+       {
+          unitDigit = array[i] % BASE;
+          buckets[unitDigit].add(array[i]);
+       }
+    }
+    
+    static void passAndDrop2(int[] array)
+    {
+       int n = array.length;
+       int nextDigit = -1;
+       for(int i = 0; i < n; i++)
+       {
+          nextDigit = array[i] / BASE;
+          buckets[nextDigit].add(array[i]);
+       }
+    }
+    
+    static void reorderArray(int[] array)
+    {
+       int arrayLength = array.length;
+       int r = 0;
+       while(r < arrayLength)
+          for(int i = 0; i < BASE; i++)
+             if(!buckets[i].isEmpty())
+             {
+                int n = buckets[i].size();
+                for(int j = 0; j < n; j++)
+                {
+                   int k = buckets[i].removeFirst();
+                   array[r] = k;
+                   r++;
+                }
+             }
+    }
+    
+    static int[] radixSort(int[] testArray)
+    {
+       int[] array = getDuplicateArray(testArray);
+       passAndDrop1(array);
+       reorderArray(array);
+       passAndDrop2(array);
+       reorderArray(array);
+       return array;
+    }
+    
+    static int[] javaSort(int[] testArray)
+    {
+       int[] array = getDuplicateArray(testArray);
+       Arrays.sort(array);
+       return array;
+    }
+    
+    static long[] getRadixSortTimes()
+    {
+       int n = testArrays.length;
+       long[] times = new long[n];
+       for(int i = 0; i < n; i++)
+       {
+          long startTime = System.nanoTime();
+          radixSort(testArrays[i]);
+          long endTime = System.nanoTime();
+          times[i] = endTime - startTime;
+       }
+       return times;
+    }
+    
+    static long[] getJavaSortTimes()
+    {
+       int n = testArrays.length;
+       long[] times = new long[n];
+       for(int i = 0; i < n; i++)
+       {
+          long startTime = System.nanoTime();
+          javaSort(testArrays[i]);
+          long endTime = System.nanoTime();
+          times[i] = endTime - startTime;
+       }
+       return times;
+    }
+    
+    static String displayResults()
+    {
+       long[] radixTimes = getRadixSortTimes();
+       long[] javaTimes = getJavaSortTimes();
+       String answer = String.format("Input = 1000%n" + 
+                                      String.format("%11d", radixTimes[0]) + " microseconds, RadixSort%n" +
+                                      String.format("%11d", javaTimes[0]) + " microseconds, JavaSort%n" +
+                                     "Input = 10000%n" + 
+                                      String.format("%11d", radixTimes[1]) + " microseconds, RadixSort%n" +
+                                      String.format("%11d", javaTimes[1]) + " microseconds, JavaSort%n" +
+                                     "Input = 100000%n" + 
+                                      String.format("%11d", radixTimes[2]) + " microseconds, RadixSort%n" +
+                                      String.format("%11d", javaTimes[2]) + " microseconds, JavaSort%n" + 
+                                     "Input = 1000000%n" + 
+                                      String.format("%11d", radixTimes[3]) + " microseconds, RadixSort%n" +
+                                      String.format("%11d", javaTimes[3]) + " microseconds, JavaSort");
+       return answer;
+    }
 }
