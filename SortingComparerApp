@@ -25,7 +25,7 @@ public class SortingComparer
       testArrays[1] = new int[10000];
       testArrays[2] = new int[100000];
       testArrays[3] = new int[1000000];
-      Random r = new Random();
+      Random r = new Random(0);
       int n = testArrays.length;
       for(int i = 0; i < n; i++)
       {
@@ -141,17 +141,17 @@ public class SortingComparer
        long[] radixTimes = getRadixSortTimes();
        long[] javaTimes = getJavaSortTimes();
        String answer = String.format("Input = 1000%n" + 
-                                      String.format("%11d", radixTimes[0]) + " microseconds, RadixSort%n" +
-                                      String.format("%11d", javaTimes[0]) + " microseconds, JavaSort%n" +
+                                      String.format("%11d", radixTimes[0]) + " nanoseconds, RadixSort%n" +
+                                      String.format("%11d", javaTimes[0]) + " nanoseconds, JavaSort%n" +
                                      "Input = 10000%n" + 
-                                      String.format("%11d", radixTimes[1]) + " microseconds, RadixSort%n" +
-                                      String.format("%11d", javaTimes[1]) + " microseconds, JavaSort%n" +
+                                      String.format("%11d", radixTimes[1]) + " nanoseconds, RadixSort%n" +
+                                      String.format("%11d", javaTimes[1]) + " nanoseconds, JavaSort%n" +
                                      "Input = 100000%n" + 
-                                      String.format("%11d", radixTimes[2]) + " microseconds, RadixSort%n" +
-                                      String.format("%11d", javaTimes[2]) + " microseconds, JavaSort%n" + 
+                                      String.format("%11d", radixTimes[2]) + " nanoseconds, RadixSort%n" +
+                                      String.format("%11d", javaTimes[2]) + " nanoseconds, JavaSort%n" + 
                                      "Input = 1000000%n" + 
-                                      String.format("%11d", radixTimes[3]) + " microseconds, RadixSort%n" +
-                                      String.format("%11d", javaTimes[3]) + " microseconds, JavaSort");
+                                      String.format("%11d", radixTimes[3]) + " nanoseconds, RadixSort%n" +
+                                      String.format("%11d", javaTimes[3]) + " nanoseconds, JavaSort");
        return answer;
     }
 }
